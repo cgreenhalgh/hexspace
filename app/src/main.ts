@@ -5,4 +5,7 @@ import router from './router'
 import store from './store'
 //import plugin from './comms/plugin'
 
-createApp(App).use(store)./*use(plugin).*/use(router).mount('#app')
+createApp(App)
+  .use(store)
+  /*.use(plugin)*/
+  .use(router).mount('#app')
