@@ -11,7 +11,8 @@ declare module '@vue/runtime-core' {
   }
 
   interface ComponentCustomProperties {
-    $store: Store<State>
+    $store: Store<State>,
+    $connect: () => void
   }
 }
 

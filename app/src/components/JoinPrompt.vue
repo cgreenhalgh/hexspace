@@ -24,8 +24,9 @@ export default defineComponent({
     }
   },
   methods: {
-    join(event) {
+    join() {
       this.$store.dispatch('join');
+      //this.$connect()
     }
   },
 });
