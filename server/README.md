@@ -13,4 +13,9 @@ sudo docker run -d \
   -p 8181:8081 --name=hexserver hexserver
 sudo docker exec -it hexserver /bin/sh
 ```
+```
+tsc
+node dist/server.js
+```
+port 8081
 

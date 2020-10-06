@@ -11,6 +11,7 @@
    <div><button @click="join">Join</button></div>
    <div>
     <label>Status: </label><span>{{ wsstate }}</span>
+    <span v-if="!!wserror"> Error</span>
    </div>
   </div>
 </template>
@@ -23,6 +24,9 @@ export default defineComponent({
   computed: {
     wsstate() {
       return this.$store.state.wsstate;
+    },
+    wserror() {
+      return this.$store.state.wserror;
     },
     wsurl: {
       get() {
