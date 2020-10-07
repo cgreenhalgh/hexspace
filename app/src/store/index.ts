@@ -115,6 +115,7 @@ export default createStore({
               if (!serverHello.authenticated) {
                 console.log('server rejects us: '+serverHello.message)
                 commit('setSessionstate', SessionState.REJECTED)
+                commit('setServererror', serverHello.message)
                 if (ws.websocket) ws.websocket.close()
                 return
               }
