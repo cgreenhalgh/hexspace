@@ -1,6 +1,35 @@
+// TYPES
+
+export interface Client {
+  clientId: string;
+  profileName: string;
+}
+
+export enum HexState {
+  INVISIBLE,
+  EMPTY
+  // TODO
+}
+
+export interface Hex {
+  hexId: string;
+  i: number;
+  j: number;
+  state: HexState;
+}
+
+// first initiates
+export interface Connection {
+  ids: [string,string];
+  hear: [boolean,boolean];
+//  hearVolume: [number,number];
+}
+
+// MESSAGES
+
 
 export const PROTOCOL = 'hexspace:ws'
-export const VERSION = 1
+export const VERSION = 2
 
 export enum MessageType {
   ClientHello,
@@ -25,5 +54,8 @@ export interface ServerHelloMessage {
   type: MessageType.ServerHello;
   authenticated: boolean;
   message: string;
+  clients: Client[];
+  hexs: Hex[];
+  connections: Connection[];
 }
 

@@ -1,3 +1,5 @@
+import { Client, Hex, Connection } from '../comms/protocol'
+
 export enum SocketState {
   // as websocket ReadyState
   CONNECTING = 0,
@@ -22,5 +24,8 @@ export interface State {
   wserror: boolean;
   sessionstate: SessionState;
   servererror?: string;
+  clients: Client[];
+  hexs: Hex[];
+  connections: Connection[];
 }
 

@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import { State, SocketState, SessionState } from './types';
-import { PROTOCOL, VERSION, Message, MessageType, ClientHelloMessage, ServerHelloMessage } from '../comms/protocol';
+import { Client, Hex, Connection } from '../comms/protocol';
+import { PROTOCOL, VERSION, Message, MessageType, ClientHelloMessage,
+ ServerHelloMessage } from '../comms/protocol';
 
 interface WSMgr {
   websocket?: WebSocket;
@@ -32,6 +34,9 @@ export default createStore({
     wsstate: SocketState.CLOSED,
     wserror: false,
     sessionstate: SessionState.CLOSED,
+    clients: [],
+    hexs: [],
+    connections: [],
   } as State,
   mutations: {
     updateProfile(state, {profileName}) {
@@ -60,6 +65,15 @@ export default createStore({
     },
     clearServererror(state) {
       state.servererror = undefined
+    },
+    setClients(state, clients: Client[]) {
+      state.clients = clients;
+    },
+    setHexs(state, hexs: Hex[]) {
+      state.hexs = hexs;
+    },
+    setConnections(state, connections: Connection[]) {
+      state.connections = connections;
     }
   },
   actions: {
@@ -121,6 +135,9 @@ export default createStore({
               }
               console.log('authenticated')
               commit('setSessionstate', SessionState.AUTHENTICATED)
+              commit('setClients', serverHello.clients)
+              commit('setHexs', serverHello.hexs)
+              commit('setConnections', serverHello.connections)
             }
             else {
               // TODO

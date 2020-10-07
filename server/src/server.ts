@@ -3,12 +3,24 @@ import * as http from 'http';
 import * as WebSocket from 'ws';
 import { Message, MessageType, PROTOCOL, VERSION, ClientHelloMessage, ServerHelloMessage } from './protocol'
 import { ConnectionState, ClientInfo } from './types'
+import { Client, Hex, HexState, Connection } from './protocol'
 
 // single placeholder join code
 // TODO rooms, etc
 const DEFAULT_JOIN_CODE = '12345'
 
 const app = express();
+
+const clients: Client[] = []
+const hexs: Hex[] = [
+  {
+    hexId: "h1",
+    i: 0,
+    j: 0,
+    state: HexState.EMPTY
+  }
+]
+const connections: Connection[] = []
 
 //initialize a simple http server
 const server = http.createServer(app);
@@ -22,7 +34,10 @@ function rejectConnection(info: ClientInfo, message: string) {
     version: VERSION,
     type: MessageType.ServerHello,
     authenticated: false,
-    message: message
+    message: message,
+    clients: [],
+    hexs: [],
+    connections: []
   }
   console.log('reject connection '+info.clientId+': '+message)
   info.connectionState = ConnectionState.REJECTED
@@ -62,7 +77,10 @@ wss.on('connection', (ws: WebSocket) => {
           version: VERSION,
           type: MessageType.ServerHello,
           authenticated: true,
-          message: 'welcome'
+          message: 'welcome',
+          clients: clients,
+          hexs: hexs,
+          connections: connections,
         }
         info.ws.send(JSON.stringify(reply))
 
