@@ -10,8 +10,10 @@
    </div>
    <div><button @click="join">Join</button></div>
    <div>
-    <label>Status: </label><span>{{ wsstate }}</span>
+    <label>WS status: </label><span>{{ wsstate }}</span>
     <span v-if="!!wserror"> Error</span>
+    <label>Session status: </label><span>{{ sessionstate }}</span>
+    <span v-if="!!servererror"> Error: {{ servererror }}</span>
    </div>
   </div>
 </template>
@@ -27,6 +29,12 @@ export default defineComponent({
     },
     wserror() {
       return this.$store.state.wserror;
+    },
+    sessionstate() {
+      return this.$store.state.sessionstate;
+    },
+    servererror() {
+      return this.$store.state.servererror;
     },
     wsurl: {
       get() {

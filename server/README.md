@@ -4,6 +4,11 @@ node.js
 
 ## build/dev
 
+NB
+```
+cp ../app/src/comms/protocol/ts src/
+```
+
 ```
 sudo docker build -t hexserver .
 ```

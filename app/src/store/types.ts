@@ -10,7 +10,8 @@ export enum SessionState {
   CLOSED,
   AUTHENTICATING,
   AUTHENTICATED,
-  REJECTED
+  REJECTED,
+  PROTOCOL_ERROR
 }
 
 export interface State {
@@ -20,5 +21,6 @@ export interface State {
   joinCode: string;
   wserror: boolean;
   sessionstate: SessionState;
+  servererror?: string;
 }
 

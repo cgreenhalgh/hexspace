@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import { State, SocketState, SessionState } from './types';
-import { PROTOCOL, VERSION, MessageType, ClientHelloMessage } from '../comms/protocol';
+import { PROTOCOL, VERSION, Message, MessageType, ClientHelloMessage, ServerHelloMessage } from '../comms/protocol';
 
 interface WSMgr {
   websocket?: WebSocket;
@@ -54,6 +54,12 @@ export default createStore({
     },
     setSessionstate(state, sessionstate: SessionState) {
       state.sessionstate = sessionstate;
+    },
+    setServererror(state, error: string) {
+      state.servererror = error
+    },
+    clearServererror(state) {
+      state.servererror = undefined
     }
   },
   actions: {
@@ -72,6 +78,7 @@ export default createStore({
       if (!ws.websocket) {
         console.log('new socket')
         commit('setWsstate', SocketState.CONNECTING)
+        commit('clearServererror')
         ws.websocket = new WebSocket(state.wsurl);
         ws.websocket.onopen = () => {
           console.log('wsopen - code='+state.joinCode)
@@ -94,7 +101,33 @@ export default createStore({
           commit('setWsstate', SocketState.CLOSED)
         }
         ws.websocket.onmessage = (event: MessageEvent) => {
-          console.log('wsmessage', event)
+          try {
+            console.log('wsmessage', event)
+            const msg = JSON.parse(event.data) as Message
+            if (state.sessionstate == SessionState.AUTHENTICATING) {
+              if (MessageType.ServerHello != msg.type) {
+                console.log('server reply not ServerHello', msg)
+                commit('setSessionstate', SessionState.PROTOCOL_ERROR)
+                if (ws.websocket) ws.websocket.close()
+                return
+              }
+              const serverHello = (msg as unknown) as ServerHelloMessage
+              if (!serverHello.authenticated) {
+                console.log('server rejects us: '+serverHello.message)
+                commit('setSessionstate', SessionState.REJECTED)
+                if (ws.websocket) ws.websocket.close()
+                return
+              }
+              console.log('authenticated')
+              commit('setSessionstate', SessionState.AUTHENTICATED)
+            }
+            else {
+              // TODO
+            }
+          } catch (ex) {
+            console.log('error handling message', ex)
+            if (ws.websocket) ws.websocket.close()
+          }
         }
       }
 
